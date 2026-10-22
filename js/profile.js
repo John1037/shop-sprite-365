@@ -3,11 +3,10 @@ import { supabase } from './supabase.js';
 import { requireUser } from './auth.js';
 import { getAvatarUrl, uploadAvatar, removeAvatar, renderAvatar } from './avatar.js';
 import { createCropper } from './cropper.js';
-import { initUserMenu, setMenuAvatar } from './user-menu.js';
+import { initTopbar, setMenuAvatar } from './topbar.js';
+import { MAX_SUPERMARKETS, SUPERMARKET_SLOTS } from './supermarkets.js';
 
 const FIELDS = ['full_name', 'display_name', 'phone', 'postcode'];
-const MAX_SUPERMARKETS = 6;
-const SUPERMARKET_SLOTS = Array.from({ length: MAX_SUPERMARKETS }, (_, i) => `supermarket_${i + 1}`);
 const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 
 const form = document.getElementById('profile-form');
@@ -58,7 +57,7 @@ if (user) {
     avatarRemoveBtn.hidden = !avatarPath;
   }
 
-  initUserMenu(avatarUrl, displayName());
+  initTopbar(avatarUrl, displayName());
   renderAvatars();
 
   // Preferred supermarkets, in order of preference (slot 1 first).

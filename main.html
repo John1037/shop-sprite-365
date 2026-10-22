@@ -12,13 +12,27 @@
     <a href="/main" class="topbar__brand" aria-label="ShopSprite 365">
       <img src="assets/logo_full.png" alt="ShopSprite 365" class="topbar__logo">
     </a>
-    <div class="user-menu">
-      <button type="button" class="user-menu__btn" id="user-menu-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="user-menu-list" aria-label="Account menu">
-        <span class="avatar" id="topbar-avatar"></span>
-      </button>
-      <div class="user-menu__list" id="user-menu-list" role="menu" hidden>
-        <a href="/profile" class="user-menu__item" role="menuitem">Profile</a>
-        <button type="button" class="user-menu__item" role="menuitem" id="logout-btn">Log out</button>
+    <div class="topbar__actions">
+      <div class="menu">
+        <button type="button" class="btn btn--ghost menu__btn" aria-haspopup="menu" aria-expanded="false" aria-controls="shops-menu">
+          Shops
+          <svg class="menu__chevron" viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="menu__list" id="shops-menu" role="menu" hidden>
+          <a href="/new-list" class="menu__item" role="menuitem">New list</a>
+          <a href="/lists?status=open" class="menu__item" role="menuitem">Open lists</a>
+          <a href="/lists?status=completed" class="menu__item" role="menuitem">Completed lists</a>
+          <a href="/lists?status=archived" class="menu__item" role="menuitem">Archived lists</a>
+        </div>
+      </div>
+      <div class="menu">
+        <button type="button" class="menu__btn menu__btn--avatar" aria-haspopup="menu" aria-expanded="false" aria-controls="account-menu" aria-label="Account menu">
+          <span class="avatar" id="topbar-avatar"></span>
+        </button>
+        <div class="menu__list" id="account-menu" role="menu" hidden>
+          <a href="/profile" class="menu__item" role="menuitem">Profile</a>
+          <button type="button" class="menu__item" role="menuitem" id="logout-btn">Log out</button>
+        </div>
       </div>
     </div>
   </header>

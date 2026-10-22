@@ -56,6 +56,7 @@ body {
 
 .topbar__actions {
   display: flex;
+  align-items: center;
   gap: 12px;
 }
 
@@ -239,15 +240,19 @@ body {
   font-weight: 600;
 }
 
-.form-field input {
+.form-field input,
+.form-field select {
   font: inherit;
   font-weight: 400;
   padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
 }
 
-.form-field input:focus {
+.form-field input:focus,
+.form-field select:focus {
   outline: 2px solid var(--brand-blue);
   outline-offset: -1px;
 }
@@ -278,6 +283,83 @@ body {
 .profile-form__submit:disabled {
   opacity: 0.6;
   cursor: default;
+}
+
+.form-hint {
+  margin: -8px 0 0;
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.form-hint a {
+  color: var(--brand-blue);
+}
+
+/* Shopping lists */
+.btn--small {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.lists-message:not(:empty) {
+  margin-bottom: 16px;
+}
+
+.list-cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.list-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.list-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.list-card__name {
+  font-weight: 600;
+}
+
+.list-card__date {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.list-card__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  color: #6b7280;
+}
+
+.empty-state p {
+  margin: 0;
 }
 
 /* Supermarket picker */
@@ -421,12 +503,21 @@ body {
   font-size: 2.4rem;
 }
 
-/* Account menu */
-.user-menu {
+/* Top bar drop-down menus */
+.menu {
   position: relative;
 }
 
-.user-menu__btn {
+.menu__chevron {
+  margin-left: 6px;
+  transition: transform 0.15s;
+}
+
+.menu__btn[aria-expanded="true"] .menu__chevron {
+  transform: rotate(180deg);
+}
+
+.menu__btn--avatar {
   display: block;
   padding: 0;
   border: 2px solid transparent;
@@ -435,17 +526,17 @@ body {
   cursor: pointer;
 }
 
-.user-menu__btn:hover,
-.user-menu__btn[aria-expanded="true"] {
+.menu__btn--avatar:hover,
+.menu__btn--avatar[aria-expanded="true"] {
   border-color: var(--brand-blue);
 }
 
-.user-menu__btn:focus-visible {
+.menu__btn--avatar:focus-visible {
   outline: 2px solid var(--brand-blue);
   outline-offset: 2px;
 }
 
-.user-menu__list {
+.menu__list {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
@@ -459,7 +550,8 @@ body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
 }
 
-.user-menu__item {
+.menu__item {
+  white-space: nowrap;
   font: inherit;
   font-size: 0.95rem;
   text-align: left;
@@ -472,8 +564,8 @@ body {
   cursor: pointer;
 }
 
-.user-menu__item:hover,
-.user-menu__item:focus-visible {
+.menu__item:hover,
+.menu__item:focus-visible {
   background: #f3f4f6;
   outline: none;
 }
