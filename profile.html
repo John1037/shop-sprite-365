@@ -60,8 +60,9 @@
         </label>
         <fieldset class="market-picker">
           <legend class="market-picker__legend">Preferred supermarkets</legend>
-          <p class="market-picker__hint" id="market-count">Choose up to 6, in order of preference.</p>
-          <div class="market-picker__list" id="market-list"></div>
+          <p class="market-picker__hint" id="market-hint" hidden></p>
+          <ol class="market-list" id="market-list" hidden></ol>
+          <select class="market-picker__add" id="market-add" aria-label="Add a supermarket"></select>
         </fieldset>
         <p class="form-message" id="profile-message" role="status"></p>
         <button type="submit" class="btn btn--primary profile-form__submit" id="profile-submit">Save</button>
