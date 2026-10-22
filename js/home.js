@@ -1,9 +1,7 @@
-// Entry point for ShopSprite 365 front-end behaviour.
+// Home page: log in / sign up.
 import { supabase } from './supabase.js';
 
-const signedOutActions = document.getElementById('signed-out-actions');
-const signedInActions = document.getElementById('signed-in-actions');
-const userEmail = document.getElementById('user-email');
+const MAIN_PAGE = '/main';
 
 const dialog = document.getElementById('auth-dialog');
 const form = document.getElementById('auth-form');
@@ -38,21 +36,19 @@ function openAuth(newMode) {
   dialog.showModal();
 }
 
-function renderUser(user) {
-  signedOutActions.hidden = Boolean(user);
-  signedInActions.hidden = !user;
-  userEmail.textContent = user ? user.email : '';
-}
+// Already signed in? Skip the form and go straight to the app.
+document.getElementById('login-btn').addEventListener('click', async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    window.location.assign(MAIN_PAGE);
+  } else {
+    openAuth('login');
+  }
+});
 
-document.getElementById('login-btn').addEventListener('click', () => openAuth('login'));
 document.getElementById('signup-btn').addEventListener('click', () => openAuth('signup'));
 document.getElementById('auth-close').addEventListener('click', () => dialog.close());
 switchBtn.addEventListener('click', () => setMode(mode === 'login' ? 'signup' : 'login'));
-
-document.getElementById('logout-btn').addEventListener('click', async () => {
-  const { error } = await supabase.auth.signOut();
-  if (error) console.error('Sign out failed:', error.message);
-});
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
@@ -66,16 +62,16 @@ form.addEventListener('submit', async (event) => {
     if (mode === 'login') {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      dialog.close();
+      window.location.assign(MAIN_PAGE);
     } else {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { emailRedirectTo: window.location.origin },
+        options: { emailRedirectTo: window.location.origin + MAIN_PAGE },
       });
       if (error) throw error;
       if (data.session) {
-        dialog.close();
+        window.location.assign(MAIN_PAGE);
       } else {
         showMessage('Check your email to confirm your account.');
       }
@@ -85,8 +81,4 @@ form.addEventListener('submit', async (event) => {
   } finally {
     submitBtn.disabled = false;
   }
-});
-
-supabase.auth.onAuthStateChange((_event, session) => {
-  renderUser(session?.user ?? null);
 });

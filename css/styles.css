@@ -14,6 +14,11 @@
   box-sizing: border-box;
 }
 
+/* Keep the hidden attribute working on elements that set their own display */
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -62,6 +67,9 @@ body {
   padding: 8px 18px;
   border-radius: 999px;
   cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
   transition: background-color 0.15s, color 0.15s, border-color 0.15s;
 }
 
@@ -106,15 +114,6 @@ body {
     padding: 6px 12px;
     font-size: 0.85rem;
   }
-}
-
-.topbar__user {
-  align-self: center;
-  font-size: 0.9rem;
-  max-width: 220px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 /* Auth dialog */
@@ -214,8 +213,69 @@ body {
   cursor: pointer;
 }
 
-@media (max-width: 480px) {
-  .topbar__user {
-    display: none;
-  }
+/* Signed-in pages */
+.page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+.page__title {
+  margin: 0 0 24px;
+  color: var(--brand-blue);
+}
+
+.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.form-field input {
+  font: inherit;
+  font-weight: 400;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.form-field input:focus {
+  outline: 2px solid var(--brand-blue);
+  outline-offset: -1px;
+}
+
+.form-field input[readonly] {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.form-message {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.form-message:empty {
+  display: none;
+}
+
+.form-message--error {
+  color: #dc2626;
+}
+
+.profile-form__submit {
+  align-self: flex-start;
+  padding: 10px 24px;
+}
+
+.profile-form__submit:disabled {
+  opacity: 0.6;
+  cursor: default;
 }

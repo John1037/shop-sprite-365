@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShopSprite 365</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo_icon.svg">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="/main" class="topbar__brand" aria-label="ShopSprite 365">
+      <img src="assets/logo_full.png" alt="ShopSprite 365" class="topbar__logo">
+    </a>
+    <nav class="topbar__actions">
+      <a href="/profile" class="btn btn--ghost">Profile</a>
+      <button type="button" class="btn btn--primary" id="logout-btn">Log out</button>
+    </nav>
+  </header>
+
+  <main class="content" id="main" hidden>
+    <div class="page">
+      <h1 class="page__title">Welcome<span id="welcome-name"></span></h1>
+      <!-- Main app content goes here -->
+    </div>
+  </main>
+
+  <script type="module" src="js/main-page.js"></script>
+</body>
+</html>

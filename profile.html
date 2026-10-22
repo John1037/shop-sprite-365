@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile – ShopSprite 365</title>
+  <link rel="icon" type="image/svg+xml" href="assets/logo_icon.svg">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a href="/main" class="topbar__brand" aria-label="ShopSprite 365">
+      <img src="assets/logo_full.png" alt="ShopSprite 365" class="topbar__logo">
+    </a>
+    <nav class="topbar__actions">
+      <a href="/main" class="btn btn--ghost">Back</a>
+      <button type="button" class="btn btn--primary" id="logout-btn">Log out</button>
+    </nav>
+  </header>
+
+  <main class="content" id="main" hidden>
+    <div class="page">
+      <h1 class="page__title">Your profile</h1>
+      <form class="profile-form" id="profile-form">
+        <label class="form-field">
+          Email
+          <input type="email" name="email" readonly>
+        </label>
+        <label class="form-field">
+          Full name
+          <input type="text" name="full_name" autocomplete="name" maxlength="100">
+        </label>
+        <label class="form-field">
+          Display name
+          <input type="text" name="display_name" autocomplete="nickname" maxlength="50">
+        </label>
+        <label class="form-field">
+          Phone
+          <input type="tel" name="phone" autocomplete="tel" maxlength="30">
+        </label>
+        <label class="form-field">
+          Postcode
+          <input type="text" name="postcode" autocomplete="postal-code" maxlength="12">
+        </label>
+        <p class="form-message" id="profile-message" role="status"></p>
+        <button type="submit" class="btn btn--primary profile-form__submit" id="profile-submit">Save</button>
+      </form>
+    </div>
+  </main>
+
+  <script type="module" src="js/profile.js"></script>
+</body>
+</html>
