@@ -5,6 +5,7 @@ import { getAvatarUrl, uploadAvatar, removeAvatar, renderAvatar } from './avatar
 import { createCropper } from './cropper.js';
 import { initTopbar, setMenuAvatar } from './topbar.js';
 import { MAX_SUPERMARKETS, SUPERMARKET_SLOTS } from './supermarkets.js';
+import { makeSortable, createDragHandle } from './sortable.js';
 
 const FIELDS = ['full_name', 'display_name', 'phone', 'postcode'];
 const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
@@ -35,7 +36,7 @@ if (user) {
 
   const { data: profile, error } = await supabase
     .from('profiles')
-    .select([...FIELDS, ...SUPERMARKET_SLOTS, 'avatar_path'].join(', '))
+    .select([...FIELDS, ...SUPERMARKET_SLOTS, 'archive_retention_days', 'avatar_path'].join(', '))
     .eq('id', user.id)
     .maybeSingle();
 
@@ -44,6 +45,10 @@ if (user) {
   } else if (profile) {
     for (const field of FIELDS) form.elements[field].value = profile[field] ?? '';
   }
+
+  // Null means archived lists are kept forever; new profiles default to 90 days.
+  const retentionSelect = form.elements.archive_retention_days;
+  retentionSelect.value = profile ? String(profile.archive_retention_days ?? 'never') : '90';
 
   let avatarPath = profile?.avatar_path ?? null;
   let avatarUrl = await getAvatarUrl(avatarPath);
@@ -79,11 +84,7 @@ if (user) {
     item.className = 'market-item';
     item.dataset.id = id;
 
-    const handle = document.createElement('button');
-    handle.type = 'button';
-    handle.className = 'market-item__handle';
-    handle.setAttribute('aria-label', `Move ${name} (use arrow keys)`);
-    handle.innerHTML = '<svg viewBox="0 0 10 16" width="10" height="16" aria-hidden="true"><g fill="currentColor"><circle cx="2" cy="2" r="1.5"/><circle cx="8" cy="2" r="1.5"/><circle cx="2" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="2" cy="14" r="1.5"/><circle cx="8" cy="14" r="1.5"/></g></svg>';
+    const handle = createDragHandle(name);
 
     const rank = document.createElement('span');
     rank.className = 'market-item__rank';
@@ -120,12 +121,6 @@ if (user) {
     marketAdd.hidden = full || available.length === 0;
   }
 
-  // Read the new order back from the list after a drag.
-  function syncOrderFromList() {
-    selectedMarkets.splice(0, selectedMarkets.length, ...[...marketList.children].map((li) => li.dataset.id));
-    [...marketList.children].forEach((li, i) => { li.querySelector('.market-item__rank').textContent = i + 1; });
-  }
-
   if (marketsError) {
     marketAdd.hidden = true;
     marketHint.hidden = false;
@@ -145,53 +140,9 @@ if (user) {
       renderMarkets();
     });
 
-    // Pointer-based dragging so it works with mouse and touch. Movement is tracked on
-    // the document because moving the item in the DOM would drop pointer capture.
-    let dragItem = null;
-
-    function onDragMove(event) {
-      const next = [...marketList.children].find((li) => {
-        if (li === dragItem) return false;
-        const box = li.getBoundingClientRect();
-        return event.clientY < box.top + box.height / 2;
-      });
-      if (next !== dragItem.nextElementSibling) {
-        marketList.insertBefore(dragItem, next ?? null);
-        syncOrderFromList();
-      }
-    }
-
-    function onDragEnd() {
-      dragItem.classList.remove('market-item--dragging');
-      dragItem = null;
-      document.removeEventListener('pointermove', onDragMove);
-      document.removeEventListener('pointerup', onDragEnd);
-      document.removeEventListener('pointercancel', onDragEnd);
-    }
-
-    marketList.addEventListener('pointerdown', (event) => {
-      const handle = event.target.closest('.market-item__handle');
-      if (!handle || dragItem) return;
-      event.preventDefault();
-      dragItem = handle.closest('.market-item');
-      dragItem.classList.add('market-item--dragging');
-      document.addEventListener('pointermove', onDragMove);
-      document.addEventListener('pointerup', onDragEnd);
-      document.addEventListener('pointercancel', onDragEnd);
-    });
-
-    // Keyboard reordering from the drag handle.
-    marketList.addEventListener('keydown', (event) => {
-      if (!event.target.closest('.market-item__handle')) return;
-      if (event.key !== 'ArrowUp' && event.key !== 'ArrowDown') return;
-      event.preventDefault();
-      const id = event.target.closest('.market-item').dataset.id;
-      const from = selectedMarkets.indexOf(id);
-      const to = from + (event.key === 'ArrowUp' ? -1 : 1);
-      if (to < 0 || to >= selectedMarkets.length) return;
-      [selectedMarkets[from], selectedMarkets[to]] = [selectedMarkets[to], selectedMarkets[from]];
-      renderMarkets();
-      marketList.querySelector(`[data-id="${id}"] .market-item__handle`).focus();
+    makeSortable(marketList, (ids) => {
+      selectedMarkets.splice(0, selectedMarkets.length, ...ids);
+      [...marketList.children].forEach((li, i) => { li.querySelector('.market-item__rank').textContent = i + 1; });
     });
 
     renderMarkets();
@@ -279,6 +230,7 @@ if (user) {
 
     const updates = { id: user.id };
     for (const field of FIELDS) updates[field] = form.elements[field].value.trim() || null;
+    updates.archive_retention_days = retentionSelect.value === 'never' ? null : Number(retentionSelect.value);
     if (!marketsError) {
       SUPERMARKET_SLOTS.forEach((slot, i) => { updates[slot] = selectedMarkets[i] ?? null; });
     }
