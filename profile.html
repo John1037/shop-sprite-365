@@ -58,6 +58,11 @@
           Postcode
           <input type="text" name="postcode" autocomplete="postal-code" maxlength="12">
         </label>
+        <fieldset class="market-picker">
+          <legend class="market-picker__legend">Preferred supermarkets</legend>
+          <p class="market-picker__hint" id="market-count">Choose up to 6, in order of preference.</p>
+          <div class="market-picker__list" id="market-list"></div>
+        </fieldset>
         <p class="form-message" id="profile-message" role="status"></p>
         <button type="submit" class="btn btn--primary profile-form__submit" id="profile-submit">Save</button>
       </form>

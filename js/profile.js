@@ -6,6 +6,8 @@ import { createCropper } from './cropper.js';
 import { initUserMenu, setMenuAvatar } from './user-menu.js';
 
 const FIELDS = ['full_name', 'display_name', 'phone', 'postcode'];
+const MAX_SUPERMARKETS = 6;
+const SUPERMARKET_SLOTS = Array.from({ length: MAX_SUPERMARKETS }, (_, i) => `supermarket_${i + 1}`);
 const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
 
 const form = document.getElementById('profile-form');
@@ -34,7 +36,7 @@ if (user) {
 
   const { data: profile, error } = await supabase
     .from('profiles')
-    .select([...FIELDS, 'avatar_path'].join(', '))
+    .select([...FIELDS, ...SUPERMARKET_SLOTS, 'avatar_path'].join(', '))
     .eq('id', user.id)
     .maybeSingle();
 
@@ -58,6 +60,57 @@ if (user) {
 
   initUserMenu(avatarUrl, displayName());
   renderAvatars();
+
+  // Preferred supermarkets, in order of preference (slot 1 first).
+  const marketList = document.getElementById('market-list');
+  const marketCount = document.getElementById('market-count');
+  const selectedMarkets = SUPERMARKET_SLOTS.map((slot) => profile?.[slot]).filter(Boolean);
+
+  const { data: markets, error: marketsError } = await supabase
+    .from('supermarkets')
+    .select('id, name, is_active')
+    .order('name');
+
+  function renderMarketState() {
+    const full = selectedMarkets.length >= MAX_SUPERMARKETS;
+    for (const input of marketList.querySelectorAll('input')) {
+      const rank = selectedMarkets.indexOf(input.value);
+      input.checked = rank !== -1;
+      input.disabled = full && rank === -1;
+      input.closest('.market-option').querySelector('.market-option__rank').textContent = rank === -1 ? '' : rank + 1;
+    }
+    marketCount.textContent = `${selectedMarkets.length} of ${MAX_SUPERMARKETS} selected, numbered in order of preference.`;
+  }
+
+  if (marketsError) {
+    showMessage(marketCount, `Could not load supermarkets: ${marketsError.message}`, true);
+  } else {
+    // Hide retired supermarkets unless the user already has them selected.
+    for (const market of markets.filter((m) => m.is_active || selectedMarkets.includes(m.id))) {
+      const option = document.createElement('label');
+      option.className = 'market-option';
+      const input = document.createElement('input');
+      input.type = 'checkbox';
+      input.value = market.id;
+      const name = document.createElement('span');
+      name.textContent = market.name;
+      const rank = document.createElement('span');
+      rank.className = 'market-option__rank';
+      option.append(input, name, rank);
+      marketList.append(option);
+    }
+
+    marketList.addEventListener('change', (event) => {
+      const id = event.target.value;
+      const index = selectedMarkets.indexOf(id);
+      if (event.target.checked && index === -1) selectedMarkets.push(id);
+      if (!event.target.checked && index !== -1) selectedMarkets.splice(index, 1);
+      renderMarketState();
+    });
+
+    renderMarketState();
+  }
+
   document.getElementById('main').hidden = false;
 
   document.getElementById('avatar-change').addEventListener('click', () => avatarInput.click());
@@ -140,6 +193,9 @@ if (user) {
 
     const updates = { id: user.id };
     for (const field of FIELDS) updates[field] = form.elements[field].value.trim() || null;
+    if (!marketsError) {
+      SUPERMARKET_SLOTS.forEach((slot, i) => { updates[slot] = selectedMarkets[i] ?? null; });
+    }
 
     const { error } = await supabase.from('profiles').upsert(updates);
     if (error) {
