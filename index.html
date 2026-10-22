@@ -12,9 +12,13 @@
     <a href="/" class="topbar__brand" aria-label="ShopSprite 365 home">
       <img src="assets/logo_full.png" alt="ShopSprite 365" class="topbar__logo">
     </a>
-    <nav class="topbar__actions">
+    <nav class="topbar__actions" id="signed-out-actions">
       <button type="button" class="btn btn--ghost" id="login-btn">Log in</button>
       <button type="button" class="btn btn--primary" id="signup-btn">Sign up</button>
+    </nav>
+    <nav class="topbar__actions" id="signed-in-actions" hidden>
+      <span class="topbar__user" id="user-email"></span>
+      <button type="button" class="btn btn--ghost" id="logout-btn">Log out</button>
     </nav>
   </header>
 
@@ -22,6 +26,27 @@
     <!-- Home page content goes here -->
   </main>
 
-  <script src="js/main.js"></script>
+  <dialog class="auth-dialog" id="auth-dialog">
+    <form class="auth-form" id="auth-form">
+      <button type="button" class="auth-dialog__close" id="auth-close" aria-label="Close">&times;</button>
+      <h2 class="auth-form__title" id="auth-title">Log in</h2>
+      <label class="auth-form__field">
+        Email
+        <input type="email" name="email" autocomplete="email" required>
+      </label>
+      <label class="auth-form__field">
+        Password
+        <input type="password" name="password" autocomplete="current-password" minlength="6" required>
+      </label>
+      <p class="auth-form__message" id="auth-message" role="status"></p>
+      <button type="submit" class="btn btn--primary auth-form__submit" id="auth-submit">Log in</button>
+      <p class="auth-form__switch">
+        <span id="auth-switch-text">No account yet?</span>
+        <button type="button" class="link-btn" id="auth-switch">Sign up</button>
+      </p>
+    </form>
+  </dialog>
+
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
