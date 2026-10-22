@@ -12,10 +12,15 @@
     <a href="/main" class="topbar__brand" aria-label="ShopSprite 365">
       <img src="assets/logo_full.png" alt="ShopSprite 365" class="topbar__logo">
     </a>
-    <nav class="topbar__actions">
-      <a href="/profile" class="btn btn--ghost">Profile</a>
-      <button type="button" class="btn btn--primary" id="logout-btn">Log out</button>
-    </nav>
+    <div class="user-menu">
+      <button type="button" class="user-menu__btn" id="user-menu-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="user-menu-list" aria-label="Account menu">
+        <span class="avatar" id="topbar-avatar"></span>
+      </button>
+      <div class="user-menu__list" id="user-menu-list" role="menu" hidden>
+        <a href="/profile" class="user-menu__item" role="menuitem">Profile</a>
+        <button type="button" class="user-menu__item" role="menuitem" id="logout-btn">Log out</button>
+      </div>
+    </div>
   </header>
 
   <main class="content" id="main" hidden>

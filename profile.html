@@ -12,15 +12,31 @@
     <a href="/main" class="topbar__brand" aria-label="ShopSprite 365">
       <img src="assets/logo_full.png" alt="ShopSprite 365" class="topbar__logo">
     </a>
-    <nav class="topbar__actions">
-      <a href="/main" class="btn btn--ghost">Back</a>
-      <button type="button" class="btn btn--primary" id="logout-btn">Log out</button>
-    </nav>
+    <div class="user-menu">
+      <button type="button" class="user-menu__btn" id="user-menu-btn" aria-haspopup="menu" aria-expanded="false" aria-controls="user-menu-list" aria-label="Account menu">
+        <span class="avatar" id="topbar-avatar"></span>
+      </button>
+      <div class="user-menu__list" id="user-menu-list" role="menu" hidden>
+        <a href="/profile" class="user-menu__item" role="menuitem">Profile</a>
+        <button type="button" class="user-menu__item" role="menuitem" id="logout-btn">Log out</button>
+      </div>
+    </div>
   </header>
 
   <main class="content" id="main" hidden>
     <div class="page">
       <h1 class="page__title">Your profile</h1>
+      <section class="avatar-editor">
+        <span class="avatar avatar--large" id="profile-avatar"></span>
+        <div class="avatar-editor__controls">
+          <div class="avatar-editor__actions">
+            <button type="button" class="btn btn--ghost" id="avatar-change">Change photo</button>
+            <input type="file" accept="image/*" id="avatar-input" hidden>
+            <button type="button" class="btn btn--ghost" id="avatar-remove" hidden>Remove</button>
+          </div>
+          <p class="form-message" id="avatar-message" role="status"></p>
+        </div>
+      </section>
       <form class="profile-form" id="profile-form">
         <label class="form-field">
           Email
@@ -47,6 +63,22 @@
       </form>
     </div>
   </main>
+
+  <dialog class="crop-dialog" id="crop-dialog" aria-labelledby="crop-title">
+    <div class="crop">
+      <h2 class="crop__title" id="crop-title">Adjust your photo</h2>
+      <canvas class="crop__canvas" id="crop-canvas" aria-label="Drag to position your photo"></canvas>
+      <label class="crop__zoom">
+        Zoom
+        <input type="range" id="crop-zoom" value="1">
+      </label>
+      <p class="form-message" id="crop-message" role="status"></p>
+      <div class="crop__actions">
+        <button type="button" class="btn btn--ghost" id="crop-cancel">Cancel</button>
+        <button type="button" class="btn btn--primary" id="crop-save">Save photo</button>
+      </div>
+    </div>
+  </dialog>
 
   <script type="module" src="js/profile.js"></script>
 </body>
