@@ -214,11 +214,41 @@ body {
   cursor: pointer;
 }
 
+/* Background image on every page except the home page (body.home).
+   Drawn on a fixed layer because background-attachment: fixed is unreliable on iOS. */
+body:not(.home) {
+  background-color: #040a1c;
+}
+
+body:not(.home)::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: url("../assets/ss365bg.png") center / cover no-repeat;
+}
+
 /* Signed-in pages */
 .page {
   max-width: 640px;
   margin: 0 auto;
   padding: 32px 16px;
+}
+
+/* Content sits on a white panel over the background image. */
+body:not(.home) .page {
+  margin: 24px auto;
+  padding: 32px 24px;
+  background: var(--bg);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+@media (max-width: 672px) {
+  body:not(.home) .page {
+    margin: 16px;
+    padding: 24px 16px;
+  }
 }
 
 .page__title {
